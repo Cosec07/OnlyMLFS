@@ -1,10 +1,15 @@
 import numpy as np
-from Functions import LR
+from Functions import LogReg
 
-X = np.array([1,3,5])
-y = np.array([4.8, 12.4, 15.5])
-n = np.size(X)
+#Dataset Sampling code
+np.random.seed(69)
 
-obj = LR.LinearRegression()
-print(obj.fit(X,y))
-print(obj.pred(1.3))
+n_samples = 100
+X = np.random.randn(n_samples,2)
+y = (2 * X[:,0] - 3 * X[:,1] + np.random.randn(n_samples)) > 0
+X_test = np.random.randn(n_samples,2)
+
+obj = LogReg.LogR()
+print(obj.fit(X,y,0.001,100))
+print(obj.pred_probs(X_test))
+print(obj.preds(X_test))

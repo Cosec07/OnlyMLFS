@@ -1,14 +1,19 @@
 import numpy as np
+import pandas as pd
 
 class LinearRegression:
     def __init__(self):
-        self.coeffs = (None,None)
+        self.coeffs = None
     def fit(self,X,y):
         #y = mx + b
-        self.m = ((X*y).mean() - (X.mean() * y.mean()) ) / ( (X**2).mean() - (X.mean())**2)
-        self.b = y.mean() - (self.m*X.mean())
-        self.coeffs = (self.m,self.b)
+        if isinstance(X, pd.DataFrame):
+            X = X.values
+        if isinstance(y, pd.Series):
+            y = y.values
+        mx = np.column_stack((np.ones(len(X)), X))
+        self.coeffs = np.linalg.inv(mx.T @ mx) @ mx.T @ y
         return self.coeffs
     def pred(self,X):
-        return (self.m * X) + self.b
+        X_in = np.column_stack((np.ones(len(X)),X))
+        return X_in @ self.coeffs
 
