@@ -8,12 +8,12 @@
 ## 2. Setup and Preparation
 - [X] Choose a deep learning framework (e.g., PyTorch, TensorFlow)
 - [X] Set up the development environment
-- [ ] Create a new project and initialize version control
+- [X] Create a new project and initialize version control
 
 ## 3. Implement Core Components
-- [ ] Implement Scaled Dot-Product Attention
-- [ ] Implement Multi-Head Attention
-- [ ] Create Position-wise Feed-Forward Networks
+- [X] Implement Scaled Dot-Product Attention
+- [X] Implement Multi-Head Attention
+- [X] Create Position-wise Feed-Forward Networks
 - [ ] Implement Positional Encoding
 - [ ] Implement Layer Normalization
 
