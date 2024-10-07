@@ -14,11 +14,11 @@
 - [X] Implement Scaled Dot-Product Attention
 - [X] Implement Multi-Head Attention
 - [X] Create Position-wise Feed-Forward Networks
-- [ ] Implement Positional Encoding
-- [ ] Implement Layer Normalization
+- [X] Implement Positional Encoding
+- [X] Implement Layer Normalization
 
 ## 4. Build Encoder and Decoder
-- [ ] Implement a single Encoder layer
+- [X] Implement a single Encoder layer
 - [ ] Stack multiple Encoder layers
 - [ ] Implement a single Decoder layer
 - [ ] Stack multiple Decoder layers
