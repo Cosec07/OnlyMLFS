@@ -19,7 +19,7 @@
 
 ## 4. Build Encoder and Decoder
 - [X] Implement a single Encoder layer
-- [ ] Stack multiple Encoder layers
+- [X] Stack multiple Encoder layers
 - [ ] Implement a single Decoder layer
 - [ ] Stack multiple Decoder layers
 

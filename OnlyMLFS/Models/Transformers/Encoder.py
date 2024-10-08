@@ -1,24 +1,18 @@
-'''This is the implementation of a single Encoder layer
 '''
-import torch
-import MHA as MHA
-import FFN as FFN
-import Layer_Norm as LN
+This is the implementation of a Encoder Network
+'''
+import Enc as ENC
+import torch.nn as nn
 
-class encoder(nn.Module):
+class Encoder(nn.Module):
 
-    def __init__(self,num_heads,embed_dims):
-        super(encoder, self).__init__()
-        self.MHA = MHA(num_heads, embed_dims)
-        self.LN1 = LN(embed_dims)
-        self.FFN = FFN(embed_dims)
-        self.LN2 = LN(embed_dims)
+    def __init__(self, num_layers,num_heads,embed_dims):
+        super(Encoder, self).__init__()
+        self.num_layers = num_layers
+        self.encoders = nn.ModuleList([ENC(num_heads,embed_dims) for _ in range(self.num_layers)])
     
-    def forward(self, inp):
-        Attn_op = self.MHA(inp)
-        x = self.LN1(inp,Attn_op)
-        nn_op = self.FFN(x)
-        x = self.LN2(x, nn_op)
-
+    def forward(self,x):
+        for layer in enumerate(self.encoders):
+            x = layer(x)
         return x
 
