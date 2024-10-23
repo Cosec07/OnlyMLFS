@@ -7,18 +7,19 @@ import math
 
 class POS_ENC(nn.Module):
 
-    def __init__(self,embed_dim,seq_len):
+    def __init__(self,embed_dim,max_seq_len, dropout_rate = 0.1):
         super(POS_ENC, self). __init__()
-        self.emded_dim = embed_dim
-        self.seq_len = seq_len
-        self.pe = torch.zeros(self.seq_len, self.embed_dim)
-        #calculate Positional Encodings
-        for pos in range(self.seq_len):
-            for i in range(0,self.embed_dim,2):
-                self.pe[pos,i] = math.sin(pos/(10000 ** ((2*i)/self.embed_dim)))
-                if i+1 < self.embed_dim:
-                    self.pe[pos,i+1] = math.cos(pos/(10000 ** ((2*i)/self.embed_dim)))
-        self.pe = self.pe.unsqueeze(0)
+        self.dropout = nn.Dropout(dropout_rate)
+
+        pe = torch.zeros(max_seq_len, embed_dim)
+        position = torch.arange(0, max_seq_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, embed_dim, 2).float() * (-math.log(10000.0)/ embed_dim))
+
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)
+        
+        self.register_buffer('pe', pe)
     
     def forward(self,x):
         x = x + self.pe[:, :x.size(1), :]

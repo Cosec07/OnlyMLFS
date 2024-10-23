@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-import OnlyMLFS.Models.Transformers.Encoder as OML
+import OnlyMLFS.Models.Transformers.Transformer as Transformer
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-def generate_sequence_dataset(num_samples=100, sequence_length=5, vocab_size=10):
+def generate_sequence_dataset(num_samples, sequence_length, vocab_size):
     """
     Generate a random sequence dataset of integers for training.
     Each sequence will consist of random integers between 1 and vocab_size.
@@ -39,9 +39,9 @@ data = generate_sequence_dataset(num_samples, sequence_length, vocab_size)
 
 # Convert the data into dataframe and test the component
 num_layers = 5
-num_heads = 6
+num_heads = 3
 embedding_dim = 6
-network = OML.Encoder(num_layers, num_heads, embedding_dim)
+network = Transformer.Transformer(vocab_size, embedding_dim, num_heads, num_layers,sequence_length)
 criteria = nn.CrossEntropyLoss()
 opt = optim.Adam(network.parameters(), lr=0.001)
 
@@ -52,12 +52,13 @@ targets = [torch.tensor(seq,dtype=torch.long) for seq in data['Target Sequence']
 #training loop
 num_epochs = 10
 
-for epochs in range(num_epochs):
+for epoch in range(num_epochs):
     epoch_loss = 0
     for inp_seq,tar_seq in zip(inp,targets):
         opt.zero_grad()
 
         inp_seq = inp_seq.unsqueeze(0)
+        #inp_seq = torch.clamp(inp_seq, 0, vocab_size - 1)
         out = network.forward(inp_seq)
 
         loss = criteria(out.view(-1,embedding_dim), tar_seq.view(-1))
