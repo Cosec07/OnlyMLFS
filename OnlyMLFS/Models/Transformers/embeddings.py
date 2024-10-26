@@ -12,6 +12,5 @@ class embeddings(nn.Module):
         nn.init.xavier_normal_(self.Embedding.weight)
     
     def forward(self,inp):
-        print(torch.max(inp))
         embeds = self.Embedding(inp)
         return embeds

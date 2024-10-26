@@ -31,9 +31,9 @@ class MHA(nn.Module):
         
         #Split heads
         qkv = qkv.reshape(batch_size, seq_len, 3, self.num_head, self.head_dim)
-        print(type(qkv))
+        
         qkv = qkv.permute(2,0,3,1,4)
-        print(type(qkv))
+        
         q,k,v = qkv[0], qkv[1], qkv[2]
         #Perfrom SDPA
         scores = torch.matmul(q, k.transpose(-2,-1)) / torch.sqrt(torch.tensor(self.head_dim, dtype=torch.float32))
