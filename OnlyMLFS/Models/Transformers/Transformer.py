@@ -6,39 +6,44 @@ import torch.nn as nn
 import OnlyMLFS.Models.Transformers.embeddings as embeddings
 import OnlyMLFS.Models.Transformers.Pos_enc as Pos_enc
 import OnlyMLFS.Models.Transformers.Encoder as Encoder
+import OnlyMLFS.Models.Transformers.Decoder as Decoder
 
 class Transformer(nn.Module):
 
     def __init__(self,vocab_size, embed_dims, num_heads, num_layers,max_seq_length,dropout_rate=0.1):
         super(Transformer, self).__init__()
 
-        self.embedding = embeddings.embeddings(vocab_size,embed_dims)
+        self.src_embedding = embeddings.embeddings(vocab_size,embed_dims)
+        self.tgt_embedding = embeddings.embeddings(vocab_size,embed_dims)
 
-        self.positional_encoding = Pos_enc.POS_ENC(embed_dims, max_seq_length)
+        self.positional_encoding = Pos_enc.POS_ENC(embed_dims, max_seq_length,dropout_rate)
 
         self.encoder = Encoder.Encoder(num_layers, num_heads, embed_dims)
 
-        self.dropout = nn.Dropout(dropout_rate)
+        self.decoder = Decoder.Decoder(num_layers, num_heads, embed_dims)
 
         self.output_projection = nn.Linear(embed_dims,vocab_size)
     
-    def forward(self,inp):
-        x = self.embedding(inp)
+    def padding_mask(self, seq):
+        return (seq != 0).unsqueeze(1).unsqueeze(2)
+    
+    def forward(self,src, tgt):
+        src_mask = self.padding_mask(src)
+        tgt_mask = self.padding_mask(tgt)
 
-        x = self.positional_encoding(x)
+        src_embeds = self.embedding(src)
+        tgt_embeds = self.embedding(tgt)
 
-        x = self.dropout(x)
+        src_encodings = self.positional_encoding(src_embeds)
+        tgt_encodings = self.positional_encoding(tgt_embeds)
 
-        encoder_out = self.encoder(x)
+        encoder_out = self.encoder(src_embeds, src_mask)
+        decoder_out = self.decoder(tgt_embeds, encoder_out, tgt_mask, src_mask)
 
-        out = self.output_projection(encoder_out)
+
+        out = self.output_projection(decoder_out)
 
         return out
-    
-    def generate_attention_mask(self,sz):
-        mask = (torch.triu(torch.ones(sz,sz) == 1).transpose(0,1))
-        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
-        return mask
 
 
 

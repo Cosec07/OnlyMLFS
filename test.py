@@ -59,7 +59,7 @@ for epoch in range(num_epochs):
 
         inp_seq = inp_seq.unsqueeze(0)
         #inp_seq = torch.clamp(inp_seq, 0, vocab_size - 1)
-        out = network.forward(inp_seq)
+        out = network.forward(inp_seq, tar_seq)
         loss = criteria(out.view(-1,vocab_size), tar_seq.view(-1))
 
         #backprop
